@@ -1,20 +1,19 @@
 {
-  "name": "윤아리 선생님의 배움 놀이터",
+  "name": "유나리 선생님의 배움 놀이터",
   "short_name": "배움 놀이터",
-  "description": "유아를 위한 숫자·한글·알파벳 학습 놀이 앱",
+  "description": "유아를 위한 숫자·셈하기·한글·알파벳 학습 놀이 앱",
   "lang": "ko",
   "dir": "ltr",
   "start_url": "./index.html",
   "scope": "./index.html",
-  "display": "standalone",
+  "display": "fullscreen",
   "display_override": [
-    "standalone",
     "fullscreen",
-    "minimal-ui"
+    "standalone"
   ],
   "orientation": "any",
-  "background_color": "#FFF7E6",
-  "theme_color": "#FF8FB1",
+  "background_color": "#fff8ec",
+  "theme_color": "#fff8ec",
   "categories": [
     "education",
     "kids"

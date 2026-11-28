@@ -1,91 +1,12 @@
-/* 윤아리 선생님의 배움 놀이터 - Service Worker
-   캐시 버전을 올리면 사용자 기기의 옛 파일이 자동으로 교체됩니다.
-   index.html을 수정해 다시 올릴 때마다 아래 CACHE_VERSION 숫자를 +1 하세요. */
-
-const CACHE_VERSION = 'v7';
-const CACHE_NAME = `yunari-playground-${CACHE_VERSION}`;
-
-const PRECACHE_URLS = [
-  './',
-  './index.html',
-  './manifest.webmanifest',
-  './icon-192.png',
-  './icon-512.png',
-  './icon-maskable-192.png',
-  './icon-maskable-512.png'
-];
-
-// 설치: 핵심 파일 미리 캐시
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(PRECACHE_URLS).catch(() => {
-        // 일부 파일이 없어도 설치가 실패하지 않도록 개별 시도
-        return Promise.all(
-          PRECACHE_URLS.map((url) =>
-            cache.add(url).catch(() => null)
-          )
-        );
-      }))
-      .then(() => self.skipWaiting())
-  );
-});
-
-// 활성화: 옛 캐시 정리
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(
-        keys.filter((key) => key !== CACHE_NAME)
-            .map((key) => caches.delete(key))
-      ))
-      .then(() => self.clients.claim())
-  );
-});
-
-// 요청 처리
-self.addEventListener('fetch', (event) => {
-  const request = event.request;
-
-  if (request.method !== 'GET') return;
-
-  const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return; // 외부 요청은 그대로 통과
-
-  // HTML 문서: 네트워크 우선 → 실패 시 캐시 (최신 버전 우선 확보)
-  if (request.mode === 'navigate' || request.destination === 'document') {
-    event.respondWith(
-      fetch(request, { cache: 'no-cache' })
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-          return response;
-        })
-        .catch(() =>
-          caches.match(request).then((cached) => cached || caches.match('./index.html'))
-        )
-    );
-    return;
-  }
-
-  // 그 외 정적 자원: 캐시 우선 → 없으면 네트워크 후 저장
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached;
-      return fetch(request, { cache: 'no-cache' })
-        .then((response) => {
-          if (response && response.status === 200 && response.type === 'basic') {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-          }
-          return response;
-        })
-        .catch(() => cached);
-    })
-  );
-});
-
-// 앱에서 즉시 업데이트를 요청할 때 사용
-self.addEventListener('message', (event) => {
-  if (event.data === 'SKIP_WAITING') self.skipWaiting();
-});
+/* 유나리 배움 놀이터 — 오프라인 지원
+   index.html 을 새로 올릴 때마다 VERSION 숫자를 올리세요. */
+const VERSION='v13-1';
+const CACHE='yunari-'+VERSION;
+const CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-maskable-192.png','./icon-maskable-512.png','./apple-touch-icon.png','./favicon.png'];
+self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>Promise.all(CORE.map(u=>c.add(u).catch(()=>null)))).then(()=>self.skipWaiting()))});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
+self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET')return;const u=new URL(r.url);if(u.origin!==location.origin)return;
+ // 화면(HTML)은 항상 최신 먼저, 안 되면 저장본
+ if(r.mode==='navigate'||r.destination==='document'){e.respondWith(fetch(r,{cache:'no-cache'}).then(res=>{const c=res.clone();caches.open(CACHE).then(x=>x.put(r,c));return res}).catch(()=>caches.match(r).then(m=>m||caches.match('./index.html'))));return}
+ // 그림·음성 파일은 저장본 먼저
+ e.respondWith(caches.match(r).then(m=>m||fetch(r).then(res=>{if(res.ok&&res.type==='basic'){const c=res.clone();caches.open(CACHE).then(x=>x.put(r,c))}return res})))});
