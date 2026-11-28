@@ -2,7 +2,7 @@
    캐시 버전을 올리면 사용자 기기의 옛 파일이 자동으로 교체됩니다.
    index.html을 수정해 다시 올릴 때마다 아래 CACHE_VERSION 숫자를 +1 하세요. */
 
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const CACHE_NAME = `yunari-playground-${CACHE_VERSION}`;
 
 const PRECACHE_URLS = [
@@ -55,7 +55,7 @@ self.addEventListener('fetch', (event) => {
   // HTML 문서: 네트워크 우선 → 실패 시 캐시 (최신 버전 우선 확보)
   if (request.mode === 'navigate' || request.destination === 'document') {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: 'no-cache' })
         .then((response) => {
           const copy = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
@@ -72,7 +72,7 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
-      return fetch(request)
+      return fetch(request, { cache: 'no-cache' })
         .then((response) => {
           if (response && response.status === 200 && response.type === 'basic') {
             const copy = response.clone();
