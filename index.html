@@ -1012,6 +1012,8 @@ function setupCanvas(){const c=$('trace-canvas');paintCanvas();let points=[],poi
     const tk=screenId,wi=state.wordIndex,pt=state.part;setTimeout(()=>{if(tk===screenId&&state.view==='trace'&&state.traceDone&&state.wordIndex===wi&&state.part===pt)nextTracePart()},1700)}
    else{$('trace-feedback').textContent='좋아요! 다음 동그라미!';say('좋아요!')}}
   else{$('trace-feedback').textContent='동그라미부터 천천히 같이 그려요';say('천천히 같이 그려요.')}paintCanvas()}}
+// 처음 열 때: 앞에서 그린 옛 홈을 새 홈으로 다시 그려요
+try{if(!state||state.view==='home')home()}catch(e){}
 </script>
 
 <script>
