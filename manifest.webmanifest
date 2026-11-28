@@ -5,13 +5,20 @@
   "lang": "ko",
   "dir": "ltr",
   "start_url": "./index.html",
-  "scope": "./",
+  "scope": "./index.html",
   "display": "standalone",
-  "display_override": ["standalone", "fullscreen", "minimal-ui"],
+  "display_override": [
+    "standalone",
+    "fullscreen",
+    "minimal-ui"
+  ],
   "orientation": "any",
   "background_color": "#FFF7E6",
   "theme_color": "#FF8FB1",
-  "categories": ["education", "kids"],
+  "categories": [
+    "education",
+    "kids"
+  ],
   "icons": [
     {
       "src": "./icon-192.png",
@@ -37,5 +44,6 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "id": "./index.html"
 }
