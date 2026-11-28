@@ -2,7 +2,7 @@
    캐시 버전을 올리면 사용자 기기의 옛 파일이 자동으로 교체됩니다.
    index.html을 수정해 다시 올릴 때마다 아래 CACHE_VERSION 숫자를 +1 하세요. */
 
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v7';
 const CACHE_NAME = `yunari-playground-${CACHE_VERSION}`;
 
 const PRECACHE_URLS = [

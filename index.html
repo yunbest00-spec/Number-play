@@ -1253,6 +1253,11 @@ function chalkMove(e){if(!CHALK.g)return;const now=performance.now(),p=[e.client
  CHALK.g.gain.setTargetAtTime(a*(.75+Math.random()*.5),T,.025);CHALK.f.frequency.setTargetAtTime(2800+Math.min(2600,v*1800)+Math.random()*400,T,.04)}CHALK.last=p;CHALK.t=now}
 function chalkStop(){if(!CHALK.src)return;const{src,g}=CHALK;CHALK.src=CHALK.g=null;try{g.gain.setTargetAtTime(0,audioCtx.currentTime,.03);src.stop(audioCtx.currentTime+.2)}catch(e){}}
 function chalkHook(){const c=$('trace-canvas');if(!c)return;c.addEventListener('pointerdown',()=>{if(state.drawing)chalkStart()});c.addEventListener('pointermove',e=>{if(state.drawing)chalkMove(e)});['pointerup','pointercancel','pointerleave'].forEach(k=>c.addEventListener(k,chalkStop))}
+
+// v13: 주소창 숨기기 — 화면을 처음 누르면 전체 화면 (설치한 앱이면 그대로)
+function goFull(){try{if(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone)return;if(document.fullscreenElement||document.webkitFullscreenElement)return;if(state&&state.view==='gate')return;
+ const d=document.documentElement,f=d.requestFullscreen||d.webkitRequestFullscreen;if(f){const r=f.call(d,{navigationUI:'hide'});if(r&&r.catch)r.catch(()=>{})}}catch(e){}}
+['touchend','click'].forEach(k=>document.addEventListener(k,goFull,{passive:true}));
 // 처음 열 때: 앞에서 그린 옛 홈을 새 홈으로 다시 그려요
 try{if(!state||state.view==='home')home()}catch(e){}
 </script>
